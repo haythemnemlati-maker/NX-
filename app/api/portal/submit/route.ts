@@ -30,10 +30,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'تم استخدام هذا الرابط من قبل' }, { status: 410 })
     }
 
-    // 2. معالجة وركوب الملفات المرفوعة إلى Supabase Storage
+    // 2. معالجة ورفع الملفات المرفوعة إلى Supabase Storage باستخدام Array.from للتوافق مع TypeScript
     const uploadedFilesMap: Record<string, string> = {}
-    
-    for (const [key, value] of formData.entries()) {
+    const entries = Array.from(formData.entries())
+
+    for (const [key, value] of entries) {
       if (value instanceof File && key.startsWith('file_')) {
         const fieldId = key.replace('file_', '')
         const fileExt = value.name.split('.').pop()
@@ -83,3 +84,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'حدث خطأ غير متوقع في السيرفر' }, { status: 500 })
   }
 }
+
